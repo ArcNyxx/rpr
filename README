@@ -1,0 +1,30 @@
+sdrp - rich presence
+====================
+sdrp is a simple and configurable rich presence daemon for discord clients.
+sdrp searches for indications of known tasks and sends information about the
+first it finds to a running discord client to be displayed globally.
+
+Requirements
+------------
+sdrp requires the discord gamesdk, which can be easily installed as libdsdk
+with the provided script.
+
+Installation
+------------
+sdrp comes with a Makefile and config.mk file for configurable building and
+testing.  Edit the latter to match your local setup (sdrp is installed into the
+/usr/local namespace by default, you may need to modify your $PATH).
+
+libdsdk can be installed with the following command (run as root):
+
+    ./libdsdk.sh
+
+sdrp can be built and installed with the following command (run as root):
+
+    make clean install
+
+
+Configuration
+-------------
+sdrp can be configured by directly editing status.sh.  This keeps it simple and
+modular.
