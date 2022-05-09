@@ -6,16 +6,18 @@
 
 include config.mk
 
-SRCS = rpserv.c
+SRCS = rpserv.c util.c
 OBJS = $(SRCS:.c=.o)
 
-SRCC = rpclnt.c
+SRCC = rpclnt.c util.c
 OBJC = $(SRCC:.c=.o)
+
+HEAD = util.h
 
 all: rpserv rpclnt
 
-$(OBJS): config.mk
-$(OBJC): config.mk
+$(OBJS): config.mk $(HEAD)
+$(OBJC): config.mk $(HEAD)
 
 .c.o:
 	$(CC) -c $(CFLAGS) $<
