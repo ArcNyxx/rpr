@@ -6,34 +6,38 @@
 
 include config.mk
 
-SRCS = rpserv.c util.c
-OBJS = $(SRCS:.c=.o)
-
-SRCC = rpclnt.c util.c
-OBJC = $(SRCC:.c=.o)
-
+SRC = rpserv.c rpclnt.c util.c
 HEAD = util.h
+OBJ = $(SRC:.c=.o)
+
+SRCSERV = rpserv.c util.c
+SRCCLNT = rpclnt.c util.c
+
+OBJSERV = $(SRCSERV:.c=.o)
+OBJCLNT = $(SRCCLNT:.c=.o)
+
+MAN = rpserv.1 rpclnt.1 rpr.1
 
 all: rpserv rpclnt
 
-$(OBJS): config.mk $(HEAD)
-$(OBJC): config.mk $(HEAD)
+$(OBJSERV): config.mk $(HEAD)
+$(OBJCLNT): config.mk $(HEAD)
 
 .c.o:
 	$(CC) -c $(CFLAGS) $<
 
-rpserv: $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+rpserv: $(OBJSERV)
+	$(CC) $(OBJSERV) -o $@ $(LDFLAGS)
 
-rpclnt: $(OBJC)
-	$(CC) $(OBJC) -o $@ $(LDFLAGS)
+rpclnt: $(OBJCLNT)
+	$(CC) $(OBJCLNT) -o $@ $(LDFLAGS)
 
 clean:
-	rm -f rpserv rpclnt $(OBJS) $(OBJC) rpr-$(VERSION).tar.gz
+	rm -f rpserv rpclnt $(OBJ) rpr-$(VERSION).tar.gz
 
 dist: clean
 	mkdir -p rpr-$(VERSION)
-	cp -R README LICENCE Makefile config.mk $(SRC1) $(SRC2) $(MAN) rpr.sh \
+	cp -R README LICENCE Makefile config.mk $(SRC) $(MAN) rpr.sh \
 		rpr-$(VERSION)
 	tar -cf rpr-$(VERSION).tar rpr-$(VERSION)
 	gzip rpr-$(VERSION).tar
@@ -44,8 +48,13 @@ install: all
 	cp -f rpserv rpclnt $(PREFIX)/bin
 	cp -f rpr.sh $(PREFIX)/bin/rpr
 	chmod 755 $(PREFIX)/bin/rpserv $(PREFIX)/bin/rpr
+	cp -f $(MAN) $(MANPREFIX)/man1
+	chmod 644 $(MANPREFIX)/man1/rpserv.1 $(MANPREFIX)/man1/rpclnt.1 \
+		$(MANPREFIX)/man1/rpr.1
 
 uninstall: all
-	rm -f $(PREFIX)/bin/rpserv $(PREFIX)/bin/rpclnt $(PREFIX)/bin/rpr
+	rm -f $(PREFIX)/bin/rpserv $(PREFIX)/bin/rpclnt $(PREFIX)/bin/rpr \
+		$(MANPREFIX)/man1/rpserv.1 $(MANPREFIX)/man1/rpclnt.1 \
+		$(MANPREFIX)/man1/rpr.1
 
 .PHONY: all clean dist install uninstall

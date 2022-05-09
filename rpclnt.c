@@ -20,15 +20,18 @@ union sockr {
 int
 main(int argc, char **argv)
 {
-	struct DiscordActivity act = { .assets.large_image = "linux",
-			.assets.large_text = "Linux" };
+	struct DiscordActivity act = {
+		.details = "Working on nothing in particular...",
+		.assets.large_image = "linux",
+		.assets.large_text = "Linux"
+	};
 
 	char *ptrs[] = { act.details, act.state,
 			act.assets.small_image, act.assets.small_text };
 	for (int i = 1; i < argc; ++i)
 		strncpy(ptrs[i - 1], argv[i], 127);
 
-	if (argc == 1) {
+	if (argv[1][0] == '\0') {
 		struct sysinfo info;
 		if (sysinfo(&info) == -1)
 			die("rpclnt: unable to get sysinfo: ");

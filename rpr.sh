@@ -3,20 +3,21 @@
 # Copyright (C) 2022 ArcNyxx
 # see LICENCE file for licensing information
 
-setp & PROC=$!
-trap 'kill "$PROC"; exit' INT
+rpserv & PROC=$!
+trap 'kill "$PROC"' EXIT; sleep 1 # wait for server ready
 
-unset PSTATE
+PAST='new'
+unset STATE DETAILS IMAGE ITEXT
 while true; do
-	sleep 5
+	[ "$STATE" != "$PAST" ] && rpclnt "$STATE" "$DETAILS" "$IMAGE" "$ITEXT"
+	PAST="$STATE"
+	sleep 4 # rate limiting
 
 	# programming in git repository with github remote
-	ps -C "$EDITOR" -o 'pid' | sed '1d' | while read -r LINE; do
+	STATE="$(ps -C "$EDITOR" -o 'pid' | sed '1d' | while read -r LINE; do
 		REMOTE="$(cat "/proc/${LINE##\ }/cwd/.git/FETCH_HEAD" \
 				2>/dev/null)"
 		[ $? -ne 0 ] && continue # file not exists
-
-		echo 'awfjweoa'
 
 		REMOTE="${REMOTE##* }"
 		[ "${REMOTE#https://}" = "$REMOTE" ] && \
@@ -24,19 +25,8 @@ while true; do
 		[ "${REMOTE##https://github.com/}" = "$REMOTE" ] &&
 			continue # remote not github.com
 
-		echo 'awfjweoa'
-
-		STATE="Working on \`${REMOTE##*/}\` at $REMOTE"
-		DETAILS=""
-
-		echo "$STATE"
-
-		[ "$STATE" = "$PSTATE" ] && continue 2
-		PSTATE="$STATE"
-
-		echo "$STATE"
-
-		echo "$STATE $DETAILS" >"/proc/$PROC/fd/0"
-		kill -s USR1 "$PROC"
-	done
+		echo "Working on \`${REMOTE##*/}\` at $REMOTE"
+		break
+	done)"
+	[ "$STATE" ] && continue
 done
