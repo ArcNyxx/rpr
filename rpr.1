@@ -1,0 +1,24 @@
+.\" rpr - rich presence
+.\" Copyright (C) 2022 ArcNyxx
+.\" see LICENCE file for licensing information
+.TH RPR 1 rpr\-VERSION
+.SH NAME
+rpr \- rich presence
+.SH SYNOPSIS
+.SY rpr
+.YS
+.SH DESCRIPTION
+.BR rpr (1)
+is a simple rich presence daemon for discord clients.
+.BR rpr (1)
+searches for known tasks and, if it finds one, sends some data to provide rich
+presence.  If a task is not found, system uptime is sent.
+.SH CONFIGURATION
+.BR rpr (1)
+can be configured by editing the 
+.I rpr.sh
+file containing the known tasks.  This keeps it simple and modular.
+.SH AUTHOR
+Written by ArcNyxx.
+.SH SEE ALSO
+.BR rpserv (1),\  rpclnt (1)

@@ -1,23 +1,22 @@
 rpr - rich presence
 ====================
-rpr is a simple and configurable rich presence daemon for discord clients.
-rpr searches for indications of known tasks and sends information about the
-first it finds to a running discord client to be displayed globally.
+rpr is a simple rich presence daemon for discord clients.  rpr searches for
+known tasks and, if it finds one, sends some data to provide rich presence.  If
+a task is not found, system uptime is sent.
 
 Requirements
 ------------
-rpr requires the discord gamesdk, which can be easily installed as libdsdk
-with the provided script.
+rpr requires the discord gamesdk, which can be installed as libdsdk with the
+following command (run as root):
+
+    ./libdsdk.sh
+
 
 Installation
 ------------
 rpr comes with a Makefile and config.mk file for configurable building and
 testing.  Edit the latter to match your local setup (rpr is installed into the
 /usr/local namespace by default, you may need to modify your $PATH).
-
-libdsdk can be installed with the following command (run as root):
-
-    ./libdsdk.sh
 
 rpr can be built and installed with the following command (run as root):
 
@@ -26,5 +25,5 @@ rpr can be built and installed with the following command (run as root):
 
 Configuration
 -------------
-rpr can be configured by directly editing status.sh.  This keeps it simple and
-modular.
+rpr can be configured by directly editing rpr.sh file containing the known
+tasks.  This keeps it simple and modular.

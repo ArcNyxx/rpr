@@ -28,7 +28,7 @@ static int
 read_act(int *fd, struct DiscordActivity *act, size_t *len)
 {
 	struct pollfd pollfd = { .fd = *fd, .events = POLLRDNORM | POLLHUP };
-	if (poll(&pollfd, 1, 0) != 1)
+	if (poll(&pollfd, 1, 500) != 1)
 		return 0;
 
 	ssize_t num = 0;
