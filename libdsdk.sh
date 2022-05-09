@@ -1,5 +1,5 @@
 #!/bin/sh
-# sdrp - rich presence
+# rpr - rich presence
 # Copyright (C) 2022 ArcNyxx
 # see LICENCE file for licensing information
 
