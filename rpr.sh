@@ -1,5 +1,5 @@
 #!/bin/sh
-# rpr - rich presence
+# rpr - rich presence daemon
 # Copyright (C) 2022 ArcNyxx
 # see LICENCE file for licensing information
 

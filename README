@@ -1,5 +1,5 @@
-rpr - rich presence
-====================
+rpr - rich presence daemon
+==========================
 rpr is a simple rich presence daemon for discord clients.  rpr searches for
 known tasks and, if it finds one, sends some data to provide rich presence.  If
 a task is not found, system uptime is sent.
