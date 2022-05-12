@@ -4,11 +4,11 @@
 # see LICENCE file for licensing information
 
 rpserv & PROC=$!
-trap 'kill "$PROC"' EXIT; sleep 1 # wait for server ready
+trap 'kill -0 "$PROC" >/dev/null 2>&1 && kill "$PROC" >/dev/null 2>&1' EXIT
 
 PAST='new'
 unset STATE DETAILS IMAGE ITEXT
-while true; do
+while kill -0 "$PROC" >/dev/null 2>&1; do
 	[ "$STATE" != "$PAST" ] && rpclnt "$STATE" "$DETAILS" "$IMAGE" "$ITEXT"
 	PAST="$STATE"
 	sleep 4 # rate limiting

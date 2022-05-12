@@ -49,7 +49,7 @@ dist: clean
 install: all
 	mkdir -p $(PREFIX)/bin $(MANPREFIX)/man1
 	cp -f rpserv rpclnt $(PREFIX)/bin
-	cp -f rpr.sh $(PREFIX)/bin/rpr
+	sed 's|SOCKET|$(SOCKET)|g' < rpr.sh > $(PREFIX)/bin/rpr
 	chmod 755 $(PREFIX)/bin/rpserv $(PREFIX)/bin/rpr
 	sed 's|SOCKET|$(SOCKET)|g;s|VERSION|$(VERSION)|g' < rpserv.1 \
 		> $(MANPREFIX)/man1/rpserv.1
