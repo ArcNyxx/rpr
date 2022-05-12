@@ -5,6 +5,7 @@
 
 rpserv & PROC=$!
 trap 'kill -0 "$PROC" >/dev/null 2>&1 && kill "$PROC" >/dev/null 2>&1' EXIT
+while [ ! -S "SOCKET" ]; do true; done # wait for server to start
 
 PAST='new'
 unset STATE DETAILS IMAGE ITEXT

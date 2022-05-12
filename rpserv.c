@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <poll.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,13 +23,22 @@ union sockr {
 	struct sockaddr_un un;
 };
 
+static void handler(int signal);
 static int read_act(int *fd, struct DiscordActivity *act, size_t *len);
+
+static volatile sig_atomic_t running = 1;
+
+static void
+handler(int signal)
+{
+	running = 0;
+}
 
 static int
 read_act(int *fd, struct DiscordActivity *act, size_t *len)
 {
 	struct pollfd pollfd = { .fd = *fd, .events = POLLRDNORM | POLLHUP };
-	if (poll(&pollfd, 1, 500) != 1)
+	if (poll(&pollfd, 1, 0) != 1)
 		return 0;
 
 	ssize_t num = 0;
@@ -67,21 +77,27 @@ main(void)
 		die("rpserv: unable to get socket flags: ");
 	if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) == -1)
 		die("rpserv: unable to set socket flags: ");
-	if (remove(SOCKP) == -1 && errno != ENOENT)
-		die("rpserv: unable to clear socket file location: ");
+	if (unlink(SOCKP) == -1 && errno != ENOENT)
+		die("rpserv: unable to remove socket: ");
 
 	union sockr addr = { .un.sun_family = AF_UNIX, .un.sun_path = SOCKP };
-	socklen_t slen = sizeof(struct sockaddr);
+	socklen_t slen = sizeof(short) + sizeof(SOCKP);
 	if (bind(sock, &addr.sa, slen) == -1)
 		die("rpserv: unable to bind socket address: ");
 	if (listen(sock, SOMAXCONN) == -1)
 		die("rpserv: unable to listen on socket: ");
 
+	struct sigaction sigact = { .sa_handler = handler };
+	sigfillset(&sigact.sa_mask);
+	if (sigaction(SIGTERM, &sigact, NULL) == -1 ||
+			sigaction(SIGINT, &sigact, NULL) == -1)
+		die("rpserv: unable to install signal handler: ");
+
 	int fd = -1;
 	size_t len = 0;
 	struct DiscordActivity act;
 	struct IDiscordActivityManager *man = core->get_activity_manager(core);
-	for (;;) {
+	while (running) {
 		if (core->run_callbacks(core) != DiscordResult_Ok)
 			die("rpserv: unable to run dsdk callbacks\n");
 
@@ -94,4 +110,8 @@ main(void)
 		if (read_act(&fd, &act, &len) != 0)
 			man->update_activity(man, &act, NULL, NULL), len = 0;
 	}
+
+	close(sock);
+	if (unlink(SOCKP) == -1 && errno != ENOENT)
+		die("rpserv: unable to remove socket: ");
 }

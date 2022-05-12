@@ -46,7 +46,7 @@ main(int argc, char **argv)
 		die("rpclnt: unable to open socket: ");
 
 	union sockr addr = { .un.sun_family = AF_UNIX, .un.sun_path = SOCKP };
-	if (connect(sock, &addr.sa, sizeof(struct sockaddr)) == -1)
+	if (connect(sock, &addr.sa, sizeof(short) + sizeof(SOCKP)) == -1)
 		die("rpclnt: unable to connect socket to address: ");
 	if (write(sock, &act, sizeof(struct DiscordActivity)) !=
 			sizeof(struct DiscordActivity))
